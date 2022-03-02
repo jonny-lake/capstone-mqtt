@@ -6,7 +6,6 @@
 
 import paho.mqtt.client as mqtt
 import time
-import json
 import sys
 from lora.crypto import loramac_decrypt
 import base64
@@ -21,7 +20,7 @@ def decodePhyPayload(msg, AppSKey, DevAddr):
 
 client_name = "loraNode" # must be unique to other instances of this script that are running simulataneously
 broker = "broker.hivemq.com" 
-topic = "v1/pushJonnyCapstone"
+topic = "v1/pull"
 SIM_MODE = False
 
 msg_list = []
@@ -40,10 +39,7 @@ def on_subscribe(mqttc, obj, mid, granted_qos):
 def on_message(mqttc, obj, msg):
 	global msg_list
 	print(1)
-	msg_py = json.loads(msg.payload)
-	msg_py["topic"] = msg.topic
-	msg_py["qos"] = msg.qos
-	print(json.dumps(msg_py, sort_keys=True, indent=4, separators=(',', ': ')))
+	msg_py = msg.payload
 	msg_list += [msg_py]
 	
 if __name__ == '__main__':
@@ -82,16 +78,7 @@ if __name__ == '__main__':
 		while True:
 			time.sleep(1)
 			while msg_list != []:
-				# get devEUI
-				try:
-					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
-						
-				except KeyError:
-					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
-
-				DecodedPayload = decodePhyPayload(RawPayload,'f2c44bac845ad32f17ed292456d0d1e7','08272988')
-				print("Decoded Payload: ",DecodedPayload)
-				mqttc.publish("v1/pull",DecodedPayload, 0,True)
+				print(msg_list[0])
 				# remove the processed message
 				msg_list = msg_list[1:]
 				
