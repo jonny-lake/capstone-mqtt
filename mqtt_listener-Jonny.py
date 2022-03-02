@@ -8,10 +8,9 @@ import paho.mqtt.client as mqtt
 import time
 import json
 import sys
-from lora.crypto import loramac_decrypt
 import base64
 	
-def decodePhyPayload(msg, AppSKey, DevAddr):
+def decodePhyPayload(msg):
 	# extract the physical payload from the message
 	# and convert to hex
 	PHYPayload = msg
@@ -82,14 +81,13 @@ if __name__ == '__main__':
 		while True:
 			time.sleep(1)
 			while msg_list != []:
-				# get devEUI
 				try:
 					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
 						
 				except KeyError:
 					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
 
-				DecodedPayload = decodePhyPayload(RawPayload,'f2c44bac845ad32f17ed292456d0d1e7','08272988')
+				DecodedPayload = decodePhyPayload(RawPayload)
 				print("Decoded Payload: ",DecodedPayload)
 				mqttc.publish("v1/pull",DecodedPayload, 0,True)
 				# remove the processed message
