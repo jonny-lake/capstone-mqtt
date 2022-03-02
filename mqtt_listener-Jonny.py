@@ -82,13 +82,18 @@ if __name__ == '__main__':
 			time.sleep(1)
 			while msg_list != []:
 				try:
+					# get lora payload from msg
 					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
 						
 				except KeyError:
+					# get lora payload from msg
 					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
 
+				# decode payload
 				DecodedPayload = decodePhyPayload(RawPayload)
+				# print decoded payload
 				print("Decoded Payload: ",DecodedPayload)
+				# publish decoded payload
 				mqttc.publish("v1/pull",DecodedPayload, 0,True)
 				# remove the processed message
 				msg_list = msg_list[1:]
