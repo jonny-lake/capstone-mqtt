@@ -10,6 +10,7 @@ from opcua import ua
 #     shell = code.InteractiveConsole(vars)
 #     shell.interact()
 
+
 # class SubHandler(object):
 
 #     def datachange_notification(self, node, val, data):
@@ -18,7 +19,6 @@ from opcua import ua
 if __name__ == "__main__":
     # change stuff here
     client = Client("opc.tcp://192.168.0.1:4840/", timeout=10)
-    
     try:
         client.connect()
 
