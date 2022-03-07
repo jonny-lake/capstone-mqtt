@@ -2,7 +2,8 @@
 import time
 import code
 
-from opcua import Client, ua
+from opcua import Client
+from opcua import ua
 # def embed():
 #     vars = globals()
 #     vars.update(locals())
