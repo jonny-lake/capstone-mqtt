@@ -20,7 +20,7 @@ def decodePhyPayload(msg):
 
 client_name = "loraNode" # must be unique to other instances of this script that are running simulataneously
 broker = "broker.hivemq.com" 
-topic = "v1/pushJonnyCapstone"
+topic = "v2/pushJonnyCapstone"
 SIM_MODE = False
 
 msg_list = []

@@ -26,7 +26,7 @@ def decodePhyPayload(msg):
 # must be unique to other instances of this script that are running simulataneously
 client_name = "loraNode"
 broker = "broker.hivemq.com"
-topic = "v1/pushJonnyCapstone"
+topic = "v2/pushJonnyCapstone"
 SIM_MODE = False
 
 msg_list = []
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 					var1_node.set_value(var1_setValue)
 					print(var1_node)
 
-				except KeyboardInterrupt:
+				finally:
 					client.disconnect()
 
 
