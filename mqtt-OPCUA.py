@@ -128,15 +128,15 @@ if __name__ == '__main__':
 					print("connected ok")
 					
 					# get node value
-					var1_node = client.get_node('ns=3;s="OPC"."PLCstate"')
-					var1 = var1_node.get_value()
+					PLCstate_node = client.get_node('ns=3;s="OPC"."PLCstate"')
+					PLCstate = PLCstate_node.get_value()
 
 					# set node value
-					var1_setValue = ua.DataValue(ua.Variant(not var1, var1_node.get_data_type_as_variant_type()))
-					var1_node.set_value(var1_setValue)
+					var1_setValue = ua.DataValue(ua.Variant(DecodedPayload, PLCstate_node.get_data_type_as_variant_type()))
+					PLCstate_node.set_value(var1_setValue)
 
 					# print node value
-					print(var1_node)
+					print(PLCstate)
 				
 				except timeout:
 					print("connection timed out")
