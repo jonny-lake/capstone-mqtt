@@ -13,8 +13,7 @@ import base64
 def decodePhyPayload(msg):
 	# extract the physical payload from the message
 	# and convert to hex
-	PHYPayload = msg
-	PHYPayload = base64.b64decode(PHYPayload).hex()
+	PHYPayload = base64.b64decode(msg).hex()
 
 	return PHYPayload
 

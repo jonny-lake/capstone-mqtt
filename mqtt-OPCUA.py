@@ -4,6 +4,13 @@
 	Date: 01/03/2022
 '''
 
+'''
+	CAPSTONE PROJECT PIPELINE (simple):
+	RASPBERRY PI sensor information (hex) -> TEKTELIC GATEWAY (base64) -> HiveMQ Broker (base 64)
+	|-> THIS script (base64 to hex conversion) -> HiveMQ (hex) and OPC-UA (hex)
+'''
+
+# python imports
 import paho.mqtt.client as mqtt
 import code
 from opcua import Client
@@ -13,25 +20,26 @@ import json
 import sys
 import base64
 
-
+# function for decoding base64 encoded messages
 def decodePhyPayload(msg):
 	# extract the physical payload from the message
 	# and convert to hex
-	PHYPayload = msg
-	PHYPayload = base64.b64decode(PHYPayload).hex()
+	PHYPayload = base64.b64decode(msg).hex()
 
 	return PHYPayload
 
 
 # must be unique to other instances of this script that are running simulataneously
 client_name = "loraNode"
+# HiveMQ broker address
 broker = "broker.hivemq.com"
+# push topic from Tektelic gateway
 topic = "v2/pushJonnyCapstone"
-SIM_MODE = False
 
+# create empty array for messages
 msg_list = []
 
-
+# mqtt 'on connect' behavior function
 def on_connect(mqttc, obj, flags, rc):
 	if rc == 0:
 		mqttc.connected_flag = True
@@ -39,12 +47,12 @@ def on_connect(mqttc, obj, flags, rc):
 	else:
 		print("bad connection. returned code = ", rc)
 
-
+# mqtt 'on subscribe' behavior function
 def on_subscribe(mqttc, obj, mid, granted_qos):
 	mqttc.subscribed_flag = True
 	print("subscribed ok")
 
-
+# mqtt 'on message' behavior function
 def on_message(mqttc, obj, msg):
 	global msg_list
 	print(1)
@@ -61,9 +69,11 @@ if __name__ == '__main__':
 	mqtt.Client.connected_flag = False
 	mqtt.Client.subscribed_flag = False
 	mqttc = mqtt.Client(client_name)
-	mqttc.on_connect = on_connect  # bind the call back functions
+	# bind call back functions
+	mqttc.on_connect = on_connect
 	mqttc.on_subscribe = on_subscribe
 	mqttc.on_message = on_message
+	# set username and password
 	mqttc.username_pw_set('', password='')
 
 	# connect to broker
@@ -96,31 +106,37 @@ if __name__ == '__main__':
 					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
 
 				except KeyError:
-					# get lora payload from msg
-					RawPayload = msg_list[0]['0004A30B001A820C'][0]['values']['nsRawPayload']
+					# handle exception
+					print("Key not found.")
 
 				# decode payload
 				DecodedPayload = decodePhyPayload(RawPayload)
 				# print decoded payload
 				print("Decoded Payload: ", DecodedPayload)
-				# publish decoded payload
+				# publish decoded payload to HiveMQ broker
 				mqttc.publish("v1/pull", DecodedPayload, 0, True)
                 # remove the processed message
 				msg_list = msg_list[1:]
 
+				# set OPC-ua client address
 				client = Client("opc.tcp://192.168.0.1:4840/", timeout=10)
 				try:
+					# connect to client
 					client.connect()
-
-					# change stuff here
+					
+					# get node value
 					var1_node = client.get_node('ns=3;s="OPC"."PLCstate"')
 					var1 = var1_node.get_value()
-					var1_setValue = ua.DataValue(ua.Variant(
-						not var1, var1_node.get_data_type_as_variant_type()))
+
+					# set node value
+					var1_setValue = ua.DataValue(ua.Variant(not var1, var1_node.get_data_type_as_variant_type()))
 					var1_node.set_value(var1_setValue)
+
+					# print node value
 					print(var1_node)
 
 				finally:
+					# disconnect from client
 					client.disconnect()
 
 
