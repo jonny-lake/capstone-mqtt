@@ -145,6 +145,7 @@ if __name__ == '__main__':
 					# disconnect from client
 					try:
 						client.disconnect()
+						print("disconnected ok")
 					except AttributeError:
 						print("OPC-UA client not connected")
 
