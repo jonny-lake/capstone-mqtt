@@ -9,6 +9,6 @@
 
 > Currently the sensor is sending messages infinitely so I can test my script and PLC implementation. These messages can be seen by running: `mqtt-OPCUA.py`
 > - Python packages needed:
-   > - [`paho.mqtt.client`](https://pypi.org/project/paho-mqtt/)
-   > - [`opcua`](https://python-opcua.readthedocs.io/en/latest/)
-   > - [`base64`](https://docs.python.org/3/library/base64.html)
+>   - [`paho.mqtt.client`](https://pypi.org/project/paho-mqtt/)
+>   - [`opcua`](https://python-opcua.readthedocs.io/en/latest/)
+>   - [`base64`](https://docs.python.org/3/library/base64.html)
