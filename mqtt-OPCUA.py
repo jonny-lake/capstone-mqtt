@@ -11,6 +11,7 @@
 '''
 
 # python imports
+from socket import timeout
 import paho.mqtt.client as mqtt
 import code
 from opcua import Client
@@ -119,10 +120,12 @@ if __name__ == '__main__':
 				msg_list = msg_list[1:]
 
 				# set OPC-ua client address
-				client = Client("opc.tcp://192.168.0.1:4840/", timeout=10)
+				client = Client("opc.tcp://192.168.0.1:4840/")
 				try:
 					# connect to client
+					print("connecting to OPC-UA client...")
 					client.connect()
+					print("connected ok")
 					
 					# get node value
 					var1_node = client.get_node('ns=3;s="OPC"."PLCstate"')
@@ -134,10 +137,16 @@ if __name__ == '__main__':
 
 					# print node value
 					print(var1_node)
+				
+				except timeout:
+					print("connection timed out")
 
 				finally:
 					# disconnect from client
-					client.disconnect()
+					try:
+						client.disconnect()
+					except AttributeError:
+						print("OPC-UA client not connected")
 
 
 	except KeyboardInterrupt: # Ctrl-c to quit
