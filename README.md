@@ -11,4 +11,4 @@
 > Python packages needed:
 - `paho.mqtt.client`
 - `opcua`
-- `base64`
+- [`base64`][https://docs.python.org/3/library/base64.html]
